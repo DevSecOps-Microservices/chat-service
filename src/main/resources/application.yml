@@ -1,0 +1,12 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: chat-service
+
+  config:
+    import: configserver:${SPRING_CONFIG_SERVER_URL:http://localhost:8888}
+  cloud:
+    config:
+      enabled: true
