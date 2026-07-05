@@ -41,11 +41,36 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
 
-      - name: Dependency scan (Snyk)
-        uses: snyk/actions/maven@master
-        continue-on-error: true
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Snyk CLI
+        run: |
+          npm install -g snyk
+          snyk --version
+
+      - name: Authenticate Snyk
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk whoami
+
+      - name: Make Maven Wrapper executable
+        run: chmod +x mvnw
+
+      - name: Dependency scan (Snyk)
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: |
+          ./mvnw dependency:tree
+          snyk test \
+            --file=pom.xml \
+            --package-manager=maven \
+            --severity-threshold=high \
+            --print-deps \
+            --debug
+        continue-on-error: true
 
       - name: Build and analyze with SonarCloud
         env:
