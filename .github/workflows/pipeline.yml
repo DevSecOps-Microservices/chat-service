@@ -117,22 +117,3 @@ jobs:
         run: |
           docker tag chat-service:latest ghcr.io/devsecops-microservices/chat-service:latest
           docker push ghcr.io/devsecops-microservices/chat-service:latest
-
-      - name: Deploy chat-service
-        run: |
-          docker stop chat-service || true
-          docker rm chat-service || true
-          docker pull ghcr.io/devsecops-microservices/chat-service:latest
-          docker run -d \
-            --name chat-service \
-            -p 8085:8085 \
-            --restart unless-stopped \
-            -e SPRING_PROFILES_ACTIVE=docker \
-            ghcr.io/devsecops-microservices/chat-service:latest
-          sleep 15
-          echo "chat-service deployed successfully"
-
-      - name: Verify deployment
-        run: |
-          docker ps | grep chat-service
-          echo "Container is running ✅"
