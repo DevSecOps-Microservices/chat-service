@@ -6,7 +6,7 @@ spring:
     name: chat-service
 
   config:
-    import: configserver:${SPRING_CONFIG_SERVER_URL:http://localhost:8888}
+    import: configserver:${SPRING_CONFIG_SERVER_URL}
   cloud:
     config:
       enabled: true
